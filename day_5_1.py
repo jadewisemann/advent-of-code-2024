@@ -6,10 +6,11 @@ from collections import defaultdict
 def parse_input(data):
     rules_section, sequence_section = data.split("\n\n")
     
-    rules = []
+    rules = defaultdict(lambda: {"front": [], "behind": []})
     for rule in rules_section.splitlines():
         head_page, tail_page = map(int, rule.split("|"))
-        rules.append((head_page, tail_page))
+        rules[head_page]["behind"].append(tail_page)
+        rules[tail_page]["front"].append(head_page)
     
     sequences = []
     for sequence in sequence_section.splitlines():
@@ -20,13 +21,18 @@ def parse_input(data):
 
 def is_order_valid(rules, sequence):
     original_index = {page: i for i, page in enumerate(sequence)}
-    
-    for head_page, tail_page in rules:
-        if head_page in original_index and tail_page in original_index:
-            if original_index[head_page] > original_index[tail_page]:
-                return False
-    return True
 
+    for page in sequence:
+        
+        for front_page in rules[page]["front"]:
+            if front_page in original_index and original_index[front_page] > original_index[page]:
+                return False
+        
+        for behind_page in rules[page]["behind"]:
+            if behind_page in original_index and original_index[behind_page] < original_index[page]:
+                return False
+        
+    return True
 
 def find_middle_page(sequence):
     n = len(sequence)
