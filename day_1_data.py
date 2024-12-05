@@ -1,6 +1,4 @@
-from collections import Counter
-
-data = """
+DATA = """
 80414   72092
 17250   26414
 23063   14603
@@ -1002,11 +1000,3 @@ data = """
 62772   51158
 69487   20471
 """
-
-
-lines = [line.split() for line in data.split("\n") if line.strip()]
-rights, lefts = zip(*[(int(r), int(l)) for r, l in lines])
-left_counter = Counter(lefts)
-
-result = sum(right * left_counter.get(right, 0) for right in rights)
-print(result)
